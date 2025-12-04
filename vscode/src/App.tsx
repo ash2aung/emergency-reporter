@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css'
 import Nav from './nav.tsx'
 import './index.css'
 import { useState, useEffect } from 'react'
-import L, { LatLng } from 'leaflet'
+import L from 'leaflet'
 import axios from 'axios';
 import { isCorrectPassword } from './password.tsx';
 import closeIconWhite from './assets/close-icon-white.png'
@@ -209,7 +209,7 @@ const LocationFinder = ({ setCurrentLoc }: LocationFinderProps) => {
 function MapPresenter({ reportState }: MapPresenterProps) {
   const loc = reportState.currentReport?.location ?? new L.LatLng(49.2767096, -122.91780296438841);
   const [isShowPopup, setIsShowPopup] = useState(false);
-  const [currentLoc, setCurrentLoc] = useState(loc);
+  const [, setCurrentLoc] = useState(loc);
   return (
     <>
       <MapContainer style={{ width: '100%', height: '100%', borderRadius: '10px' }} center={loc} zoom={13}>
