@@ -62,37 +62,43 @@ function ReportItem({ report, id, reportState }: ReportItemProps) {
   return (
     <>
       <TableRow 
-        className='cursor-pointer hover:bg-accent/50 transition-colors border-border'
+        className='cursor-pointer hover:bg-accent/30 transition-all border-border/50 group'
         onClick={() => {
           setIsShowingReportInfo(true);
           reportState.setCurrentReport(report);
         }}
       >
-        <TableCell className='font-medium text-sm'>
-          {locationName || `${report.location!.lat.toFixed(4)}, ${report.location!.lng.toFixed(4)}`}
+        <TableCell className='font-medium text-sm py-3 text-center'>
+          <span className="group-hover:text-primary transition-colors">
+            {locationName || `${report.location!.lat.toFixed(4)}, ${report.location!.lng.toFixed(4)}`}
+          </span>
         </TableCell>
-        <TableCell className='text-sm text-muted-foreground'>{report.type}</TableCell>
-        <TableCell className='text-sm text-muted-foreground'>{time}</TableCell>
-        <TableCell>
-          <Badge 
-            variant={report.status === ReportStatus.OPEN ? "default" : "secondary"}
-            className={report.status === ReportStatus.OPEN 
-              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30" 
-              : "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-            }
-          >
-            {report.status}
-          </Badge>
+        <TableCell className='text-sm text-muted-foreground py-3 text-center'>{report.type}</TableCell>
+        <TableCell className='text-sm text-muted-foreground py-3 text-center'>{time}</TableCell>
+        <TableCell className='py-3 text-center'>
+          <div className="flex justify-center">
+            <Badge 
+              variant={report.status === ReportStatus.OPEN ? "default" : "secondary"}
+              className={report.status === ReportStatus.OPEN 
+                ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border-emerald-500/30" 
+                : "bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/30"
+              }
+            >
+              {report.status}
+            </Badge>
+          </div>
         </TableCell>
-        <TableCell>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
-            onClick={handleDelete}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+        <TableCell className='py-3 text-center'>
+          <div className="flex justify-center">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={handleDelete}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </TableCell>
       </TableRow>
 

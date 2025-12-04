@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function MapSection({ reportState }: { reportState: ReportsState }) {
   return (
-    <Card className="flex-1 flex flex-col bg-card/50 border-border">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-semibold tracking-tight">Map</CardTitle>
+    <Card className="flex-1 flex flex-col bg-card border-border shadow-lg">
+      <CardHeader className="pb-3 border-b border-border/50">
+        <CardTitle className="text-xl font-semibold tracking-tight text-center">
+          Map View
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-0">
-        <div className="h-full min-h-[500px] rounded-lg overflow-hidden">
+      <CardContent className="flex-1 p-6 pt-4">
+        <div className="h-full min-h-[600px] rounded-lg overflow-hidden border border-border/50 shadow-inner">
           <MapPresenter reportState={reportState} />
         </div>
       </CardContent>
@@ -23,11 +25,18 @@ function MapSection({ reportState }: { reportState: ReportsState }) {
 
 function LocationsSection({ reportState }: { reportState: ReportsState }) {
   return (
-    <Card className="w-[420px] flex flex-col bg-card/50 border-border">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-semibold tracking-tight">Reports</CardTitle>
+    <Card className="w-full max-w-[480px] flex flex-col bg-card border-border shadow-lg">
+      <CardHeader className="pb-3 border-b border-border/50">
+        <CardTitle className="text-xl font-semibold tracking-tight text-center">
+          Emergency Reports
+          {reportState.reportLocations.length > 0 && (
+            <span className="text-sm font-normal text-muted-foreground ml-2">
+              ({reportState.reportLocations.length} {reportState.reportLocations.length === 1 ? 'report' : 'reports'})
+            </span>
+          )}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 p-4 pt-0 overflow-hidden">
+      <CardContent className="flex-1 p-6 pt-4 overflow-hidden">
         <ReportList reportState={reportState} />
       </CardContent>
     </Card>
@@ -72,9 +81,11 @@ function ContentSection() {
   };
 
   return (
-    <div className="flex-1 flex gap-6 p-6 w-full max-w-[1600px] mx-auto">
-      <MapSection reportState={reportState} />
-      <LocationsSection reportState={reportState} />
+    <div className="flex-1 w-full">
+      <div className="flex flex-col lg:flex-row gap-6 px-6 lg:px-8 xl:px-12 pt-12 lg:pt-16 pb-6 lg:pb-8 max-w-[1800px] mx-auto">
+        <MapSection reportState={reportState} />
+        <LocationsSection reportState={reportState} />
+      </div>
     </div>
   );
 }
@@ -83,13 +94,17 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Nav />
-      <header className="px-6 py-6 text-center border-b border-border/50">
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-          Emergency Reporter
-        </h1>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Track and manage emergency reports in real-time
-        </p>
+      <header className="border-b border-border/50 bg-gradient-to-b from-card/30 to-transparent pb-10 lg:pb-12">
+        <div className="px-6 lg:px-8 py-8 lg:py-10 max-w-[1800px] mx-auto w-full">
+          <div className="flex flex-col gap-3 items-center">
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-foreground bg-gradient-to-r from-foreground to-foreground/90 bg-clip-text text-center">
+              Emergency Reporter
+            </h1>
+            <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto text-center">
+              Track and manage emergency reports in real-time
+            </p>
+          </div>
+        </div>
       </header>
       <ContentSection />
     </div>
