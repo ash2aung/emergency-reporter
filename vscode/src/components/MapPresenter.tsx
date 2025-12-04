@@ -3,8 +3,13 @@ import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 're
 import L from 'leaflet';
 import { ReportData, ReportDataProps } from '../types';
 import { isReportsEqual } from '../utils';
-import PopupPane from './PopupPane';
 import ViewReport from './ViewReport';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const MapContainerRecenterer = ({ reportState }: ReportDataProps) => {
   const map = useMap();
@@ -127,15 +132,20 @@ function MapPresenter({ reportState }: MapPresenterProps) {
           />
         )}
       </MapContainer>
-      {isShowPopup && reportState.currentReport && (
-        <PopupPane>
+      <Dialog open={isShowPopup} onOpenChange={setIsShowPopup}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Report Details</DialogTitle>
+          </DialogHeader>
+          {reportState.currentReport && (
           <ViewReport 
             report={reportState.currentReport} 
             reportState={reportState} 
             closeFunc={() => setIsShowPopup(false)} 
           />
-        </PopupPane>
       )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

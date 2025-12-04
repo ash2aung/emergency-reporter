@@ -122,14 +122,14 @@ function ReportList({ reportState }: ReportListProps) {
 
       <Dialog open={hasAddReportPopup} onOpenChange={setHasAddReportPopup}>
         <DialogTrigger asChild>
-          <Button className="mt-4 w-full gap-2" variant="default">
+          <Button className="mt-4 w-full gap-2" variant="default" size="lg">
             <Plus className="h-4 w-4" />
             Add Report
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Report</DialogTitle>
+            <DialogTitle className="text-xl">Add New Report</DialogTitle>
           </DialogHeader>
           <AddReport closeFunc={(report) => {
             setHasAddReportPopup(false);

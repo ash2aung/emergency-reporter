@@ -72,7 +72,7 @@ function ContentSection() {
   };
 
   return (
-    <div className="flex-1 flex gap-6 p-6 w-full max-w-[1600px]">
+    <div className="flex-1 flex gap-6 p-6 w-full max-w-[1600px] mx-auto">
       <MapSection reportState={reportState} />
       <LocationsSection reportState={reportState} />
     </div>
@@ -83,11 +83,11 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Nav />
-      <header className="px-6 py-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
+      <header className="px-6 py-6 text-center border-b border-border/50">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
           Emergency Reporter
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-muted-foreground mt-2 text-sm">
           Track and manage emergency reports in real-time
         </p>
       </header>

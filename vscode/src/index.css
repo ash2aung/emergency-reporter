@@ -53,6 +53,21 @@ body {
 /* Leaflet Map Styles */
 .leaflet-container {
   @apply rounded-lg;
+  z-index: 1 !important;
+}
+
+/* Ensure Leaflet panes don't interfere with dialogs */
+.leaflet-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 2 !important;
+}
+
+.leaflet-control {
+  z-index: 3 !important;
 }
 
 @theme inline {

@@ -58,7 +58,7 @@ function AddReport({ closeFunc }: AddReportProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-4'>
+    <form onSubmit={handleSubmit} className='space-y-5'>
       <div className='space-y-2'>
         <Label htmlFor='witness-name'>Witness Name</Label>
         <Input 

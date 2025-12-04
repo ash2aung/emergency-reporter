@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { ReportData, ReportsState, ReportStatus } from '../types';
 import { latLngToString, getHMS } from '../utils';
 import { isCorrectPassword } from '../password';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -44,50 +43,54 @@ function ViewReport({ closeFunc, report, reportState }: ViewReportProps) {
   };
 
   return (
-    <Card className='w-full max-w-md border-none bg-transparent shadow-none'>
-      <CardHeader className='pb-2'>
-        <CardTitle className='text-2xl text-center'>Report Details</CardTitle>
-      </CardHeader>
-      <CardContent className='space-y-4'>
+    <div className='space-y-4'>
         {report.image && showImage && (
+          <div className='flex justify-center'>
           <img 
             src={report.image} 
             alt='Report Image'
-            className='max-w-60 max-h-60 mx-auto rounded-xl object-cover'
+              className='max-w-full max-h-64 rounded-lg object-cover border border-border'
             onError={() => setShowImage(false)}
           />
+          </div>
         )}
 
-        <div className='space-y-3'>
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Type</span>
-            <span>{report.type}</span>
+        <div className='space-y-4'>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-center'>
+            <span className='text-sm font-medium text-muted-foreground'>Type</span>
+            <span className='font-medium'>{report.type}</span>
           </div>
 
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Location</span>
-            <span className='text-right max-w-[60%]'>{locationStr || 'Loading...'}</span>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-start'>
+            <span className='text-sm font-medium text-muted-foreground'>Location</span>
+            <span className='text-sm break-words'>{locationStr || 'Loading...'}</span>
           </div>
 
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Reporter</span>
-            <span>{report.reporterName}</span>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-center'>
+            <span className='text-sm font-medium text-muted-foreground'>Reporter</span>
+            <span className='text-sm'>{report.reporterName}</span>
           </div>
 
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Phone</span>
-            <span>{report.reporterPhone}</span>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-center'>
+            <span className='text-sm font-medium text-muted-foreground'>Phone</span>
+            <span className='text-sm font-mono'>{report.reporterPhone}</span>
           </div>
 
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Time</span>
-            <span>{new Date(report.time).toLocaleDateString()} ({getHMS(new Date(report.time))})</span>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-center'>
+            <span className='text-sm font-medium text-muted-foreground'>Time</span>
+            <span className='text-sm'>{new Date(report.time).toLocaleDateString()} ({getHMS(new Date(report.time))})</span>
           </div>
 
-          <div className='flex justify-between items-center'>
-            <span className='font-semibold text-muted-foreground'>Status</span>
+          <div className='grid grid-cols-[120px_1fr] gap-4 items-center'>
+            <span className='text-sm font-medium text-muted-foreground'>Status</span>
             <div className='flex items-center gap-2'>
-              <Badge variant={status === ReportStatus.OPEN ? 'default' : 'secondary'}>
+              <Badge 
+                variant={status === ReportStatus.OPEN ? 'default' : 'secondary'}
+                className={status === ReportStatus.OPEN 
+                  ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border-emerald-500/30" 
+                  : "bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/30"
+                }
+              >
                 {status}
               </Badge>
               <Button variant='outline' size='sm' onClick={handleStatusChange}>
@@ -97,9 +100,9 @@ function ViewReport({ closeFunc, report, reportState }: ViewReportProps) {
           </div>
 
           {report.comment && (
-            <div className='flex justify-between items-start'>
-              <span className='font-semibold text-muted-foreground'>Comments</span>
-              <span className='text-right max-w-[60%]'>{report.comment}</span>
+            <div className='grid grid-cols-[120px_1fr] gap-4 items-start'>
+              <span className='text-sm font-medium text-muted-foreground'>Comments</span>
+              <p className='text-sm text-muted-foreground break-words'>{report.comment}</p>
             </div>
           )}
         </div>
@@ -107,8 +110,7 @@ function ViewReport({ closeFunc, report, reportState }: ViewReportProps) {
         <Button onClick={closeFunc} className='w-full mt-4'>
           Close
         </Button>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

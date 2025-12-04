@@ -97,9 +97,9 @@ function ReportItem({ report, id, reportState }: ReportItemProps) {
       </TableRow>
 
       <Dialog open={isShowingReportInfo} onOpenChange={setIsShowingReportInfo}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Report Details</DialogTitle>
+            <DialogTitle className="text-xl">Report Details</DialogTitle>
           </DialogHeader>
           <ViewReport 
             report={report} 
