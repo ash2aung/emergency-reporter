@@ -48,5 +48,3 @@ npm run dev
 - Dagem Dereje
 - Jack Aung
 ```
-
-test
