@@ -4,26 +4,33 @@ import Nav from './nav';
 import './index.css';
 import { ReportData, ReportsState } from './types';
 import { MapPresenter, ReportList } from './components';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface MapSectionProps {
-  reportState: ReportsState;
-}
-
-function MapSection({ reportState }: MapSectionProps) {
+function MapSection({ reportState }: { reportState: ReportsState }) {
   return (
-    <div className="bg-zinc-800 rounded-lg flex justify-center items-center flex-col text-center mr-0 mt-[6%] mb-[6%] w-full">
-      <h3 className="pb-3 font-extrabold w-full text-5xl p-2">Map</h3>
-      <MapPresenter reportState={reportState} />
-    </div>
+    <Card className="flex-1 flex flex-col bg-card/50 border-border">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-2xl font-semibold tracking-tight">Map</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 p-4 pt-0">
+        <div className="h-full min-h-[500px] rounded-lg overflow-hidden">
+          <MapPresenter reportState={reportState} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
 function LocationsSection({ reportState }: { reportState: ReportsState }) {
   return (
-    <div className="bg-zinc-800 rounded-lg flex justify-center items-center flex-col text-center w-full h-full">
-      <h3 className="p-2 font-extrabold text-5xl">Reports</h3>
-      <ReportList reportState={reportState} />
-    </div>
+    <Card className="w-[420px] flex flex-col bg-card/50 border-border">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-2xl font-semibold tracking-tight">Reports</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 p-4 pt-0 overflow-hidden">
+        <ReportList reportState={reportState} />
+      </CardContent>
+    </Card>
   );
 }
 
@@ -65,38 +72,27 @@ function ContentSection() {
   };
 
   return (
-    <div className="bg-zinc-800 flex-1 flex w-full justify-around">
-      <div className="flex w-[85%] gap-4">
-        <MapSection reportState={reportState} />
-        <LocationsSection reportState={reportState} />
-      </div>
-    </div>
-  );
-}
-
-function WebsiteTitle() {
-  return (
-    <h1 className="p-2 font-extrabold text-5xl text-center">
-      Emergency Reporter
-    </h1>
-  );
-}
-
-function MainContent() {
-  return (
-    <div id="mainSection" className="flex flex-col items-center h-full">
-      <WebsiteTitle />
-      <ContentSection />
+    <div className="flex-1 flex gap-6 p-6 w-full max-w-[1600px]">
+      <MapSection reportState={reportState} />
+      <LocationsSection reportState={reportState} />
     </div>
   );
 }
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-background">
       <Nav />
-      <MainContent />
-    </>
+      <header className="px-6 py-8 text-center">
+        <h1 className="text-4xl font-bold tracking-tight">
+          Emergency Reporter
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Track and manage emergency reports in real-time
+        </p>
+      </header>
+      <ContentSection />
+    </div>
   );
 }
 

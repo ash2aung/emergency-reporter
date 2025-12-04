@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react';
 import { ReportData, ReportDataProps, ReportStatus } from '../types';
 import { latLngToString, getHMS, isReportsEqual } from '../utils';
 import { isCorrectPassword } from '../password';
-import PopupPane from './PopupPane';
 import ViewReport from './ViewReport';
-import closeIconWhite from '../assets/close-icon-white.png';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { X } from 'lucide-react';
 
 interface ReportItemProps extends ReportDataProps {
   report: ReportData,
@@ -13,97 +21,93 @@ interface ReportItemProps extends ReportDataProps {
 
 function ReportItem({ report, id, reportState }: ReportItemProps) {
   const [isShowingReportInfo, setIsShowingReportInfo] = useState(false);
-  const reportElementId = `report-list-${id}`;
+  const [locationName, setLocationName] = useState<string | null>(null);
   const date = new Date(report.time);
   const time = `${date.toLocaleDateString()} (${getHMS(date)})`;
 
   useEffect(() => {
-    report.location && latLngToString(report.location!)
-      .then((locString) => {
-        const reportElement = document.getElementById(reportElementId + '-location');
-        reportElement && (reportElement.innerText = `${locString}`);
-      })
-      .catch(() => {
-        const reportElement = document.getElementById(reportElementId + '-location');
-        reportElement && (reportElement.innerText = `[${report.location?.lat}, ${report.location?.lng}]`);
-      });
-
-    if (report.status == ReportStatus.OPEN) {
-      const reportStatus = document.getElementById(reportElementId + '-status');
-      reportStatus!.classList.remove('text-red-500');
-      reportStatus!.classList.add('text-green-500');
-    } else {
-      const reportStatus = document.getElementById(reportElementId + '-status');
-      reportStatus!.classList.remove('text-green-500');
-      reportStatus!.classList.add('text-red-500');
+    if (report.location) {
+      latLngToString(report.location)
+        .then(setLocationName)
+        .catch(() => setLocationName(null));
     }
-  });
+  }, [report.location]);
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const enteredPwd = prompt('Enter the password:');
+    if (enteredPwd == null) return;
+
+    if (!isCorrectPassword(enteredPwd)) {
+      alert('Incorrect password!');
+      return;
+    }
+
+    reportState.setReports(reps => {
+      const newReps = [...reps];
+      newReps.splice(id, 1);
+      localStorage.setItem('reports', JSON.stringify(newReps));
+      return newReps;
+    });
+    reportState.setReportLocations(oldLocs => {
+      const oldEl = oldLocs.find(v => isReportsEqual(v, report));
+      const newLocs = [...oldLocs];
+      if (oldEl) {
+        newLocs.splice(newLocs.indexOf(oldEl), 1);
+      }
+      return newLocs;
+    });
+  };
 
   return (
     <>
-      <tr 
-        key={reportElementId} 
-        id={reportElementId} 
-        className='bg-zinc-600 w-full transition-colors duration-300 p-2 hover:cursor-pointer hover:bg-zinc-500'
+      <TableRow 
+        className='cursor-pointer hover:bg-accent/50 transition-colors border-border'
         onClick={() => {
           setIsShowingReportInfo(true);
           reportState.setCurrentReport(report);
         }}
       >
-        <td id={reportElementId + '-location'} className='p-2'>
-          {`[${report.location!.lat}, ${report.location!.lng}]`}
-        </td>
-        <td className='p-2'>{report.type}</td>
-        <td className='p-2'>{time}</td>
-        <td id={reportElementId + '-status'} className='p-2 font-bold'>{report.status}</td>
-        <td 
-          className='w-8 h-8 p-2'
-          onClick={(e) => {
-            e.stopPropagation();
-            const enteredPwd = prompt('Enter the password:');
-            if (enteredPwd == null) {
-              return;
+        <TableCell className='font-medium text-sm'>
+          {locationName || `${report.location!.lat.toFixed(4)}, ${report.location!.lng.toFixed(4)}`}
+        </TableCell>
+        <TableCell className='text-sm text-muted-foreground'>{report.type}</TableCell>
+        <TableCell className='text-sm text-muted-foreground'>{time}</TableCell>
+        <TableCell>
+          <Badge 
+            variant={report.status === ReportStatus.OPEN ? "default" : "secondary"}
+            className={report.status === ReportStatus.OPEN 
+              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30" 
+              : "bg-red-500/20 text-red-400 hover:bg-red-500/30"
             }
+          >
+            {report.status}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive"
+            onClick={handleDelete}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </TableCell>
+      </TableRow>
 
-            if (!isCorrectPassword(enteredPwd)) {
-              alert('Incorrect password!');
-              return;
-            }
-
-            reportState.setReports(reps => {
-              const newReps = [...reps];
-              newReps.splice(id, 1);
-              localStorage.setItem('reports', JSON.stringify(newReps));
-              return newReps;
-            });
-            reportState.setReportLocations(oldLocs => {
-              const oldEl = oldLocs.find(v => isReportsEqual(v, report));
-              const newLocs = [...oldLocs];
-              if (oldEl) {
-                newLocs.splice(newLocs.indexOf(oldEl), 1);
-              }
-              return newLocs;
-            })
-          }}
-        >
-          <img 
-            src={closeIconWhite} 
-            alt='X' 
-            className='w-full h-full z-10 hover:opacity-80 transition-opacity' 
-          />
-        </td>
-      </tr>
-      {isShowingReportInfo &&
-        <PopupPane>
+      <Dialog open={isShowingReportInfo} onOpenChange={setIsShowingReportInfo}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Report Details</DialogTitle>
+          </DialogHeader>
           <ViewReport 
             report={report} 
             reportState={reportState} 
-            closeFunc={() => {
-              setIsShowingReportInfo(false);
-            }} 
+            closeFunc={() => setIsShowingReportInfo(false)} 
           />
-        </PopupPane>
-      }
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

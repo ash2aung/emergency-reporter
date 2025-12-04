@@ -1,126 +1,136 @@
 import { useState } from 'react';
 import { ReportDataProps } from '../types';
 import { isReportsEqual } from '../utils';
-import PopupPane from './PopupPane';
 import AddReport from './AddReport';
 import ReportItem from './ReportItem';
-import addIcon from '../assets/cross.png';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Plus, ArrowUpDown } from 'lucide-react';
 
 interface ReportListProps extends ReportDataProps {}
 
 function ReportList({ reportState }: ReportListProps) {
   const [hasAddReportPopup, setHasAddReportPopup] = useState(false);
-  const reportElements = reportState.reportLocations.map((e, index) => (
-    <ReportItem reportState={reportState} key={index} report={e} id={index} />
-  ));
-
   const [sortUp, setSortUp] = useState(false);
 
   const sortTableBy = (sortType: string) => {
-    const tableElem = document.getElementById('report-table') as HTMLTableElement;
-    if (tableElem) {
-      reportState.setReportLocations(prevLocs => {
-        const newLocs = [...prevLocs];
+    reportState.setReportLocations(prevLocs => {
+      const newLocs = [...prevLocs];
 
-        switch (sortType.trim().toLowerCase()) {
-          case 'location':
-            newLocs.sort((a, b) => {
-              let retVal = 0;
-              const valMult = sortUp ? 1 : -1;
+      switch (sortType.trim().toLowerCase()) {
+        case 'location':
+          newLocs.sort((a, b) => {
+            let retVal = 0;
+            const valMult = sortUp ? 1 : -1;
 
-              const aLocName = localStorage.getItem(`location=${a.location?.lat}, ${a.location?.lng}`);
-              const bLocName = localStorage.getItem(`location=${b.location?.lat}, ${b.location?.lng}`);
+            const aLocName = localStorage.getItem(`location=${a.location?.lat}, ${a.location?.lng}`);
+            const bLocName = localStorage.getItem(`location=${b.location?.lat}, ${b.location?.lng}`);
 
-              if (!aLocName || !bLocName) {
-                const latComp = (2 * +(a.location!.lat < b.location!.lat ? 1 : 0) - 1);
-                const lngComp = (2 * +(a.location!.lng < b.location!.lng ? 1 : 0) - 1);
-                retVal = latComp == 0 ? latComp : lngComp;
-              } else {
-                const strComp = 2 * +(aLocName < bLocName ? 1 : 0) - 1;
-                retVal = strComp;
-              }
+            if (!aLocName || !bLocName) {
+              const latComp = (2 * +(a.location!.lat < b.location!.lat ? 1 : 0) - 1);
+              const lngComp = (2 * +(a.location!.lng < b.location!.lng ? 1 : 0) - 1);
+              retVal = latComp == 0 ? latComp : lngComp;
+            } else {
+              const strComp = 2 * +(aLocName < bLocName ? 1 : 0) - 1;
+              retVal = strComp;
+            }
 
-              return retVal * valMult;
-            });
+            return retVal * valMult;
+          });
+          setSortUp(prev => !prev);
+          break;
+        case 'type':
+          sortUp ? newLocs.sort((a, b) => a.type < b.type ? -1 : (a.type == b.type ? 0 : 1)) :
+            newLocs.sort((a, b) => a.type < b.type ? 1 : (a.type == b.type ? 0 : -1));
+          setSortUp(prev => !prev);
+          break;
+        case 'time':
+          sortUp ? newLocs.sort((a, b) => a.time < b.time ? -1 : (a.time == b.time ? 0 : 1)) :
+            newLocs.sort((a, b) => a.time < b.time ? 1 : (a.time == b.time ? 0 : -1))
+          setSortUp(prev => !prev);
+          break;
+        case 'status':
+          sortUp ? newLocs.sort((a, b) => a.status < b.status ? -1 : (a.status == b.status ? 0 : 1)) :
+            newLocs.sort((a, b) => a.status < b.status ? 1 : (a.status == b.status ? 0 : -1));
+          setSortUp(prev => !prev);
+          break;
+        default:
+          return prevLocs;
+      }
 
-            setSortUp(prev => !prev);
-            break;
-          case 'type':
-            sortUp ? newLocs.sort((a, b) => a.type < b.type ? -1 : (a.type == b.type ? 0 : 1)) :
-              newLocs.sort((a, b) => a.type < b.type ? 1 : (a.type == b.type ? 0 : -1));
-            setSortUp(prev => !prev);
-            break;
-          case 'time':
-            sortUp ? newLocs.sort((a, b) => a.time < b.time ? -1 : (a.time == b.time ? 0 : 1)) :
-              newLocs.sort((a, b) => a.time < b.time ? 1 : (a.time == b.time ? 0 : -1))
-            setSortUp(prev => !prev);
-            break;
-          case 'status':
-            sortUp ? newLocs.sort((a, b) => a.status < b.status ? -1 : (a.status == b.status ? 0 : 1)) :
-              newLocs.sort((a, b) => a.status < b.status ? 1 : (a.status == b.status ? 0 : -1));
-            setSortUp(prev => !prev);
-            break;
-          default:
-            return prevLocs;
-        }
-
-        return newLocs;
-      })
-    }
+      return newLocs;
+    });
   };
 
-  return (
-    <>
-      <ul className='bg-zinc-700 rounded-xl overflow-auto flex flex-col list-none max-h-[600px] justify-start w-full h-full'>
-        <li key={reportElements.length + 2} className='w-full'>
-          <table id="report-table" className='sortable table w-full border-collapse'>
-            <thead>
-              <tr key={reportElements.length + 2} className='py-4'>
-                <th 
-                  onClick={() => sortTableBy("location")} 
-                  className='py-4 cursor-pointer hover:bg-zinc-600 transition-colors'
-                >
-                  Location
-                </th>
-                <th 
-                  onClick={() => sortTableBy("type")} 
-                  className='py-4 cursor-pointer hover:bg-zinc-600 transition-colors'
-                >
-                  Type
-                </th>
-                <th 
-                  onClick={() => sortTableBy("time")} 
-                  className='py-4 cursor-pointer hover:bg-zinc-600 transition-colors'
-                >
-                  Time Reported
-                </th>
-                <th 
-                  onClick={() => sortTableBy("status")} 
-                  className='py-4 cursor-pointer hover:bg-zinc-600 transition-colors'
-                >
-                  Status
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {reportElements}
-            </tbody>
-          </table>
-        </li>
-        <li 
-          id='add-report-item' 
-          key={reportElements.length + 1} 
-          className='bg-zinc-600 w-full transition-colors duration-300 p-2 flex justify-between items-center hover:cursor-pointer hover:bg-zinc-500 rounded-b-xl'
-          onClick={() => setHasAddReportPopup(true)}
-        >
-          <div className='flex-[2] text-center'>Add Report</div>
-          <img src={addIcon} alt='+' className='w-8 h-8 p-1' />
-        </li>
-      </ul>
+  const SortableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+    <TableHead 
+      onClick={() => sortTableBy(sortKey)} 
+      className="cursor-pointer hover:bg-accent/50 transition-colors select-none"
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+      </div>
+    </TableHead>
+  );
 
-      {hasAddReportPopup && (
-        <PopupPane>
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-auto rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent border-border">
+              <SortableHeader label="Location" sortKey="location" />
+              <SortableHeader label="Type" sortKey="type" />
+              <SortableHeader label="Time" sortKey="time" />
+              <SortableHeader label="Status" sortKey="status" />
+              <TableHead className="w-10"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {reportState.reportLocations.map((report, index) => (
+              <ReportItem 
+                reportState={reportState} 
+                key={index} 
+                report={report} 
+                id={index} 
+              />
+            ))}
+          </TableBody>
+        </Table>
+        
+        {reportState.reportLocations.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <p>No reports in view</p>
+            <p className="text-sm">Pan the map to see reports</p>
+          </div>
+        )}
+      </div>
+
+      <Dialog open={hasAddReportPopup} onOpenChange={setHasAddReportPopup}>
+        <DialogTrigger asChild>
+          <Button className="mt-4 w-full gap-2" variant="default">
+            <Plus className="h-4 w-4" />
+            Add Report
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Report</DialogTitle>
+          </DialogHeader>
           <AddReport closeFunc={(report) => {
             setHasAddReportPopup(false);
             reportState.setReports((reports) => {
@@ -129,9 +139,7 @@ function ReportList({ reportState }: ReportListProps) {
               localStorage.setItem('reports', JSON.stringify(newReports));
               return newReports;
             });
-            reportState.setOneTimeReport(() => {
-              return report;
-            });
+            reportState.setOneTimeReport(() => report);
             reportState.setReportLocations(oldLocs => {
               const el = reportState.reportLocations.find(v => isReportsEqual(v, report));
               if (!el) {
@@ -142,9 +150,9 @@ function ReportList({ reportState }: ReportListProps) {
               return oldLocs;
             });
           }} />
-        </PopupPane>
-      )}
-    </>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 
