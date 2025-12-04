@@ -81,8 +81,8 @@ function ContentSection() {
   };
 
   return (
-    <div className="flex-1 w-full">
-      <div className="flex flex-col lg:flex-row gap-6 px-6 lg:px-8 xl:px-12 pt-12 lg:pt-16 pb-6 lg:pb-8 max-w-[1800px] mx-auto">
+    <div className="flex-1 w-full px-6 lg:px-8 xl:px-12 mt-12 lg:mt-16">
+      <div className="flex flex-col lg:flex-row gap-6 pb-6 lg:pb-8 max-w-[1800px] mx-auto">
         <MapSection reportState={reportState} />
         <LocationsSection reportState={reportState} />
       </div>
@@ -94,7 +94,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Nav />
-      <header className="border-b border-border/50 bg-gradient-to-b from-card/30 to-transparent pb-10 lg:pb-12">
+      <header className="border-b border-border/50 bg-gradient-to-b from-card/30 to-transparent">
         <div className="px-6 lg:px-8 py-8 lg:py-10 max-w-[1800px] mx-auto w-full">
           <div className="flex flex-col gap-3 items-center">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-foreground bg-gradient-to-r from-foreground to-foreground/90 bg-clip-text text-center">
